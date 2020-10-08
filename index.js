@@ -6,6 +6,7 @@ const token = process.env.token
 const statuses = ["Blue vent", "Red be sus", "Cyan scan in medbay", "Black not do tasks", "Yellow kill crewmates"] 
 var prefix = "!"
 var dead = []; 
+var roles = ["dead", "ded", "spectator"];
 
 //status is "watching thing"
 
@@ -21,7 +22,7 @@ bot.on('messageReactionAdd', async (reaction, user) => {
   
   if(!reaction.message.author === bot.user) return;
 
-  reaction.users.remove(user); var roles = ["dead", "ded", "spectator"]
+  reaction.users.remove(user); 
   const dedrole = reaction.message.guild.roles.cache.find(e => roles.includes(e.name.toLowerCase()));;
   switch(reaction.emoji.name){
     case "DeadCyan":
@@ -63,7 +64,6 @@ bot.on("message", async msg =>{
       await m.react("763538722754134033"); await m.react("♻️");
       await m.react("❗"); await m.react("🚪"); await m.react("💬");})
     case "kill":
-        var roles = ["dead", "ded", "spectator"]
         if(!messageSplit[1]) return msg.channel.send("Provide the id of someone to kill!");
         if(isNaN(messageSplit[1])) return msg.channel.send("That is not an id!");
         if(!msg.member.hasPermission("MANAGE_ROLES")) return msg.channel.send("You're being too sus to run this!");
@@ -73,6 +73,44 @@ bot.on("message", async msg =>{
         msg.guild.members.cache.get(messageSplit[1]).roles.add(msg.guild.roles.cache.filter(e => e.id === deadrole.id)).catch(e=>{msg.channel.send("I failed to add the role, the role might not exsist, the user already has it, or i don't have permission to manage roles!")
         })
         msg.channel.send("That user has now been killed!");
+    break;
+    case "setup":
+      if(!messageSplit[1]){
+        let setupsneeded = [];
+        if (!msg.guild.roles.cache.some((channel) => roles.includes(channel.name.toLowerCase()))) setupsneeded.push("DEAD_ROLE");
+        if (!msg.guild.channels.cache.some((channel) => channel.name.toLowerCase() === "waiting")) setupsneeded.push("WAITING_VOICE");
+        if (!msg.guild.channels.cache.some((channel) => channel.name.toLowerCase() === "dead")) setupsneeded.push("DEAD_VOICE");
+        if (!msg.guild.channels.cache.some((channel) => channel.name.toLowerCase() === "in-game")) setupsneeded.push("GAME_VOICE");
+        var setups = "";
+        if(!setupsneeded[0]){
+          var setups = "No missing roles/channels!"
+        }else{
+          var setups = setupsneeded.toString()
+        }
+        msg.channel.send("> Current needed configurations: `"+setups+"` \n> Missing a channel? Let my auto setup make it! `!setup run`")
+      }else{
+        if(!messageSplit[1].toLowerCase() === "run") return msg.channel.send("Thats not a valid option!")
+        if(!msg.member.hasPermission("MANAGE_CHANNELS")) return msg.channel.send("You're being too sus to run this!");
+        let setupsneeded = [];
+        if (!msg.guild.roles.cache.some((channel) => roles.includes(channel.name.toLowerCase()))) setupsneeded.push("DEAD_ROLE");
+        if (!msg.guild.channels.cache.some((channel) => channel.name.toLowerCase() === "waiting")) setupsneeded.push("WAITING_VOICE");
+        if (!msg.guild.channels.cache.some((channel) => channel.name.toLowerCase() === "dead")) setupsneeded.push("DEAD_VOICE");
+        if (!msg.guild.channels.cache.some((channel) => channel.name.toLowerCase() === "in-game")) setupsneeded.push("GAME_VOICE");
+        if (!msg.guild.channels.cache.some((channel) => channel.name.toLowerCase() === "meeting")) setupsneeded.push("MEETING_VOICE");
+        if(!setupsneeded[0]) return msg.channel.send("It looks like this server is already set up!");
+        try{
+        msg.guild.channels.create('among us', {type: 'category'})
+        if (!msg.guild.roles.cache.some((channel) => roles.includes(channel.name.toLowerCase()))) msg.guild.roles.create({data: {name: 'dead'},reason: 'Among us auto setup',})
+        if (!msg.guild.channels.cache.some((channel) => channel.name.toLowerCase() === "meeting")) msg.guild.channels.create('meeting', {type: 'voice',permissionOverwrites: [{ id: msg.guild.roles.cache.find(e => roles.includes(e.name.toLowerCase())).id, deny: ['SPEAK'],}], parent: msg.guild.categories.cache.find(e => e.name.toLowerCase() === "among us").id, });
+        if (!msg.guild.channels.cache.some((channel) => channel.name.toLowerCase() === "waiting")) msg.guild.channels.create('waiting', {type: 'voice', parent: msg.guild.categories.cache.find(e => e.name.toLowerCase() === "among us").id})
+        if (!msg.guild.channels.cache.some((channel) => channel.name.toLowerCase() === "dead")) msg.guild.channels.create('dead', {type: 'voice', parent: msg.guild.categories.cache.find(e => e.name.toLowerCase() === "among us").id})
+        if (!msg.guild.channels.cache.some((channel) => channel.name.toLowerCase() === "in-game")) msg.guild.channels.create('in-game', {type: 'voice', parent: msg.guild.categories.cache.find(e => e.name.toLowerCase() === "among us").id,permissionOverwrites: [{ id: msg.guild.id, deny: ['SPEAK'],}], })
+        msg.channel.send("> Created required roles/channels")
+        }catch(e){
+        msg.channel.send("> An error occured while creating the channels, I might be missing `MANAGE_CHANNELS` perms")
+        console.log(e);
+        }
+      }
   }})
 
     
