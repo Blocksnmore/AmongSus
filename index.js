@@ -56,7 +56,7 @@ bot.on("message", async msg =>{
   var command = messageSplit[0].substring(1)
   if(!msg.content.startsWith(prefix)) return;
   switch(command){
-    case "rrmsg":
+    case "createpanel":
       if(!msg.member.hasPermission("MANAGE_MESSAGES")) return msg.channel.send("You're being too sus to run this!");
       msg.delete();
       const embed = new discord.MessageEmbed().setTitle("Among us control panel").setDescription("<:DeadCyan:763538722754134033> - Dead \n♻️ - Start/Restart game \n❗ - Meeting \n🚪 - Meeting over \n💬 - Send everyone to main vc")
@@ -112,6 +112,10 @@ bot.on("message", async msg =>{
         console.log(e);
         }
       }
+  break;
+  case "help":
+      msg.channel.send("> Among us discord bot help \n> Developed by Blocks_n_more#5526 \n> **!help** - Shows this \n> **!createpanel** - Create reaction panel \n> **!kill** - Force kill a user \n> **!setup** - Server setup")
+  break;
   }})
 
     
