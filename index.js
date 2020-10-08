@@ -1,11 +1,11 @@
-const discord = require("discord.js"); exports.discord = discord;
+const discord = require("discord.js"); 
 const bot = new discord.Client({partials: ['MESSAGE','REACTION', 'CHANNEL']});
-const fs = require("file-system"); exports.fs = fs;
+const fs = require("file-system"); 
 
 const token = process.env.token
 const statuses = ["Blue vent", "Red be sus", "Cyan scan in medbay", "Black not do tasks", "Yellow kill crewmates"] 
 var prefix = "!"
-var dead = []; exports.dead = dead;
+var dead = []; 
 
 //status is "watching thing"
 
@@ -79,7 +79,7 @@ bot.on("message", async msg =>{
 { const http = require("http"); const e = require("express"); const app = e(); 
   app.get("/", (request, response) => { response.send("<h2>What u doin here?</h2>"); });
   app.listen(process.env.PORT);
-  setInterval(() => { http.get(`http://Impostor.blocksnmore.repl.co`); }, 280000);
+  setInterval(() => { http.get(`http://AmongSus.blocksnmore.repl.co`); }, 280000);
 }
 
 bot.on("ready", () => {
