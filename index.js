@@ -101,10 +101,10 @@ bot.on("message", async msg =>{
         try{
         msg.guild.channels.create('among us', {type: 'category'})
         if (!msg.guild.roles.cache.some((channel) => roles.includes(channel.name.toLowerCase()))) msg.guild.roles.create({data: {name: 'dead'},reason: 'Among us auto setup',})
-        if (!msg.guild.channels.cache.some((channel) => channel.name.toLowerCase() === "meeting")) msg.guild.channels.create('meeting', {type: 'voice',permissionOverwrites: [{ id: msg.guild.roles.cache.find(e => roles.includes(e.name.toLowerCase())).id, deny: ['SPEAK'],}], parent: msg.guild.categories.cache.find(e => e.name.toLowerCase() === "among us").id, });
-        if (!msg.guild.channels.cache.some((channel) => channel.name.toLowerCase() === "waiting")) msg.guild.channels.create('waiting', {type: 'voice', parent: msg.guild.categories.cache.find(e => e.name.toLowerCase() === "among us").id})
-        if (!msg.guild.channels.cache.some((channel) => channel.name.toLowerCase() === "dead")) msg.guild.channels.create('dead', {type: 'voice', parent: msg.guild.categories.cache.find(e => e.name.toLowerCase() === "among us").id})
-        if (!msg.guild.channels.cache.some((channel) => channel.name.toLowerCase() === "in-game")) msg.guild.channels.create('in-game', {type: 'voice', parent: msg.guild.categories.cache.find(e => e.name.toLowerCase() === "among us").id,permissionOverwrites: [{ id: msg.guild.id, deny: ['SPEAK'],}], })
+        if (!msg.guild.channels.cache.some((channel) => channel.name.toLowerCase() === "meeting")) msg.guild.channels.create('meeting', {type: 'voice',permissionOverwrites: [{ id: msg.guild.roles.cache.find(e => roles.includes(e.name.toLowerCase())).id, deny: ['SPEAK'],}], parent: msg.guild.categories.cache.find(e => e.name.toLowerCase() === "among us" && e.type === "category").id, });
+        if (!msg.guild.channels.cache.some((channel) => channel.name.toLowerCase() === "waiting")) msg.guild.channels.create('waiting', {type: 'voice', parent: msg.guild.channels.cache.find(e => e.name.toLowerCase() === "among us" && e.type === "category").id})
+        if (!msg.guild.channels.cache.some((channel) => channel.name.toLowerCase() === "dead")) msg.guild.channels.create('dead', {type: 'voice', parent: msg.guild.channels.cache.find(e => e.name.toLowerCase() === "among us" && e.type === "category").id})
+        if (!msg.guild.channels.cache.some((channel) => channel.name.toLowerCase() === "in-game")) msg.guild.channels.create('in-game', {type: 'voice', parent: msg.guild.channels.cache.find(e => e.name.toLowerCase() === "among us" && e.type === "category").id,permissionOverwrites: [{ id: msg.guild.id, deny: ['SPEAK'],}], })
         msg.channel.send("> Created required roles/channels")
         }catch(e){
         msg.channel.send("> An error occured while creating the channels, I might be missing `MANAGE_CHANNELS` perms")
