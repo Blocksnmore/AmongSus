@@ -2,7 +2,7 @@ const discord = require("discord.js"); exports.discord = discord;
 const bot = new discord.Client({partials: ['MESSAGE','REACTION', 'CHANNEL']});
 const fs = require("file-system"); exports.fs = fs;
 
-const token = "NzYzNTI3OTU5MzkwMTkxNjU3.X35A0w.HK06xvnJvi8JGbfJMZv9fNfRyD4"
+const token = process.env.token
 const statuses = ["Blue vent", "Red be sus", "Cyan scan in medbay", "Black not do tasks", "Yellow kill crewmates"] 
 var prefix = "!"
 var dead = []; exports.dead = dead;
