@@ -1,0 +1,92 @@
+const discord = require("discord.js"); exports.discord = discord;
+const bot = new discord.Client({partials: ['MESSAGE','REACTION', 'CHANNEL']});
+const fs = require("file-system"); exports.fs = fs;
+
+const token = "NzYzNTI3OTU5MzkwMTkxNjU3.X35A0w.HK06xvnJvi8JGbfJMZv9fNfRyD4"
+const statuses = ["Blue vent", "Red be sus", "Cyan scan in medbay", "Black not do tasks", "Yellow kill crewmates"] 
+var prefix = "!"
+var dead = []; exports.dead = dead;
+
+//status is "watching thing"
+
+
+// substring(6)
+
+bot.on('messageReactionAdd', async (reaction, user) => {
+  if(user.bot) return; 
+
+  if(reaction.message.channel.type === "dm") return;
+  
+  if(!reaction.message.embeds) return;
+  
+  if(!reaction.message.author === bot.user) return;
+
+  reaction.users.remove(user); var roles = ["dead", "ded", "spectator"]
+  const dedrole = reaction.message.guild.roles.cache.find(e => roles.includes(e.name.toLowerCase()));;
+  switch(reaction.emoji.name){
+    case "DeadCyan":
+      if(dead.includes(user.id)) return user.send("You are already dead!");
+      user.send("You are now dead!"); dead.push(user.id);
+      let i = reaction.message.guild.roles.cache.find(e => e.id === dedrole.id);
+      reaction.message.guild.member(user).roles.add(i)
+    break; case "♻️":
+      dead = [];
+      reaction.message.guild.members.cache.forEach(async (member) => { member.roles.remove(dedrole).catch(eee=>{}); })
+      reaction.message.guild.members.cache.forEach(async (member) => {
+      if (!member.voice.channel) return;
+      await member.voice.setChannel(reaction.message.guild.channels.cache.find(r => r.name.toLowerCase() === "in-game"))})
+    break; case "❗":
+      reaction.message.guild.members.cache.forEach(async (member) => {
+      if (!member.voice.channel) return;
+      await member.voice.setChannel(reaction.message.guild.channels.cache.find(r => r.name.toLowerCase() === "meeting"))})
+    break; case "🚪":
+      reaction.message.guild.members.cache.forEach(async (member) => {if (!member.voice.channel) return;
+      if(dead.includes(member.id)) return await member.voice.setChannel(reaction.message.guild.channels.cache.find(r => r.name.toLowerCase() === "dead"))
+      if(!dead.includes(member.id)) return member.voice.setChannel(reaction.message.guild.channels.cache.find(r => r.name.toLowerCase() === "in-game"))})
+    break; case "💬":
+      reaction.message.guild.members.cache.forEach(async (member) => { if (!member.voice.channel) return;
+      await member.voice.setChannel(reaction.message.guild.channels.cache.find(r => r.name.toLowerCase() === "waiting"))})
+    break;}
+})
+
+bot.on("message", async msg =>{
+  if(msg.author.bot) return;
+  var messageSplit = msg.content.toString().split(" ");
+  var command = messageSplit[0].substring(1)
+  if(!msg.content.startsWith(prefix)) return;
+  switch(command){
+    case "rrmsg":
+      if(!msg.member.hasPermission("MANAGE_MESSAGES")) return msg.channel.send("You're being too sus to run this!");
+      msg.delete();
+      const embed = new discord.MessageEmbed().setTitle("Among us control panel").setDescription("<:DeadCyan:763538722754134033> - Dead \n♻️ - Start/Restart game \n❗ - Meeting \n🚪 - Meeting over \n💬 - Send everyone to main vc")
+      msg.channel.send(embed).then(async m=>{
+      await m.react("763538722754134033"); await m.react("♻️");
+      await m.react("❗"); await m.react("🚪"); await m.react("💬");})
+    case "kill":
+        var roles = ["dead", "ded", "spectator"]
+        if(!messageSplit[1]) return msg.channel.send("Provide the id of someone to kill!");
+        if(isNaN(messageSplit[1])) return msg.channel.send("That is not an id!");
+        if(!msg.member.hasPermission("MANAGE_ROLES")) return msg.channel.send("You're being too sus to run this!");
+        if(dead.includes(messageSplit[1])) return msg.channel.send("They are already dead!");
+        let deadrole = msg.guild.roles.cache.find(e => roles.includes(e.name.toLowerCase()))
+        dead.push(messageSplit[1]); 
+        msg.guild.members.cache.get(messageSplit[1]).roles.add(msg.guild.roles.cache.filter(e => e.id === deadrole.id)).catch(e=>{msg.channel.send("I failed to add the role, the role might not exsist, the user already has it, or i don't have permission to manage roles!")
+        })
+        msg.channel.send("That user has now been killed!");
+  }})
+
+    
+{ const http = require("http"); const e = require("express"); const app = e(); 
+  app.get("/", (request, response) => { response.send("<h2>What u doin here?</h2>"); });
+  app.listen(process.env.PORT);
+  setInterval(() => { http.get(`http://Impostor.blocksnmore.repl.co`); }, 280000);
+}
+
+bot.on("ready", () => {
+ setInterval(function(){
+  bot.user.setActivity(statuses[Math.floor(Math.random() * statuses.length)], {type: "WATCHING"})
+ },60000) 
+ console.log("Watching people be among us")
+})
+
+bot.login(token)
