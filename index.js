@@ -3,7 +3,7 @@ const bot = new discord.Client({partials: ['MESSAGE','REACTION', 'CHANNEL']});
 const fs = require("file-system"); 
 
 const token = process.env.token
-const statuses = ["Blue vent", "Red be sus", "Cyan scan in medbay", "Black not do tasks", "Yellow kill crewmates", "Blocks_n_more develop features", "People use the Among sus discord bot", "I like your cut G", "Pink make assumptions", "Purple vote first", "Sus plays on @servers@ servers"] 
+const statuses = ["Blue vent", "Red be sus", "Cyan scan in medbay", "Black not do tasks", "Yellow kill crewmates", "Blocks_n_more develop features", "People use the Among sus discord bot", "I like your cut G", "Pink make assumptions", "Purple vote first", "Sus plays"] 
 var prefix = "!"
 var dead = []; 
 var roles = ["dead", "ded", "spectator"];
@@ -22,10 +22,11 @@ bot.on('messageReactionAdd', async (reaction, user) => {
   
   if(!reaction.message.embeds) return;
   
-  if(!reaction.message.author === bot.user) return;
+  let getuserid = await reaction.message.channel.messages.fetch(reaction.message.id)
+  if(getuserid.author.id !== bot.user.id) return;
 
   reaction.users.remove(user); 
-  const dedrole = reaction.message.guild.roles.cache.find(e => roles.includes(e.name.toLowerCase()));;
+  const dedrole = reaction.message.guild.roles.cache.find(e => roles.includes(e.name.toLowerCase()));
   switch(reaction.emoji.name){
     case "DeadCyan":
       if(dead.includes(user.id)) return user.send("You are already dead!");
@@ -130,7 +131,7 @@ bot.on("message", async msg =>{
 
 bot.on("ready", () => {
  setInterval(function(){
-  bot.user.setActivity(statuses[Math.floor(Math.random() * statuses.length)].repeat("@servers@", ""+bot.guilds.cache.size), {type: "WATCHING"})
+  bot.user.setActivity(statuses[Math.floor(Math.random() * statuses.length)], {type: "WATCHING"})
  },60000) 
  console.log("Watching people be among us")
 })
