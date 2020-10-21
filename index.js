@@ -1,6 +1,5 @@
 const discord = require("discord.js"); 
 const bot = new discord.Client({partials: ['MESSAGE','REACTION', 'CHANNEL']});
-const fs = require("file-system"); 
 
 const token = process.env.token
 const statuses = ["Blue vent", "Red be sus", "Cyan scan in medbay", "Black not do tasks", "Yellow kill crewmates", "Blocks_n_more develop features", "People use the Among sus discord bot", "I like your cut G", "Pink make assumptions", "Purple vote first", "Sus plays"] 
